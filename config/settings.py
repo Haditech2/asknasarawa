@@ -119,6 +119,11 @@ if DATABASE_URL:
             "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "60")),
             "OPTIONS": {
                 "sslmode": database_query.get("sslmode", [os.getenv("DB_SSLMODE", "require")])[0],
+                **(
+                    {"channel_binding": database_query["channel_binding"][0]}
+                    if "channel_binding" in database_query
+                    else {}
+                ),
             },
         }
     }
