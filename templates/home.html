@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{% if UI_LANGUAGE == 'ha' %}Tambayi Nasarawa — Bayanan Ayyukan Gwamnati{% else %}Tambayi Nasarawa — Government Service Information{% endif %}{% endblock %}
+
+{% block content %}
+<section class="home-hero">
+  <div class="container-xl">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="hero-kicker-wrap mb-3">
+          <span class="eyebrow"><i class="bi bi-shield-shaded me-2"></i>{% if UI_LANGUAGE == 'ha' %}GWAMNATIN JIHAR NASARAWA · SASHE MAI TABBATARWA{% else %}NASARAWA STATE GOVERNMENT · CITIZEN SERVICES{% endif %}</span>
+          <span class="badge-status-live"><span class="status-dot"></span> {% if UI_LANGUAGE == 'ha' %}A shirye{% else %}Live System{% endif %}</span>
+        </div>
+        <h1>{% if UI_LANGUAGE == 'ha' %}Ayyukan gwamnati.<br><em>A harshenka.</em>{% else %}Government services.<br><em>In your language.</em>{% endif %}</h1>
+        <p class="hero-lead">
+          {% if UI_LANGUAGE == 'ha' %}
+            Samu tabbataccen bayani kan ayyukan Jihar Nasarawa da Hausa ko Turanci. Tambaya, sami matakai masu sauƙi, sannan ka je majiyar hukuma ba tare da wahala ba.
+          {% else %}
+            Find verified guidance for Nasarawa State public services in English or Hausa. Ask a direct question, receive step-by-step guidance, and follow direct official agency links.
+          {% endif %}
+        </p>
+
+        <!-- Quick Launch Prompt Pills -->
+        <div class="quick-prompts-wrap mt-3">
+          <span class="quick-prompts-label">{% if UI_LANGUAGE == 'ha' %}Tambayoyin gaggawa:{% else %}Quick start topics:{% endif %}</span>
+          <div class="quick-prompt-chips">
+            <a href="{% url 'chatbot:chat' %}?q={% if UI_LANGUAGE == 'ha' %}Yaya+zan+nemi+tallafin+karatu%3F{% else %}How+can+I+apply+for+a+scholarship%3F{% endif %}" class="prompt-chip">
+              <i class="bi bi-mortarboard-fill text-gold"></i>
+              <span>{% if UI_LANGUAGE == 'ha' %}Tallafin Karatu{% else %}Scholarships{% endif %}</span>
+            </a>
+            <a href="{% url 'chatbot:chat' %}?q={% if UI_LANGUAGE == 'ha' %}Yaya+ake+biyan+harajin+kasuwanci%3F{% else %}How+do+I+pay+business+tax%3F{% endif %}" class="prompt-chip">
+              <i class="bi bi-cash-coin text-green"></i>
+              <span>{% if UI_LANGUAGE == 'ha' %}Haraji &amp; Kasuwanci{% else %}Tax &amp; Business{% endif %}</span>
+            </a>
+            <a href="{% url 'chatbot:chat' %}?q={% if UI_LANGUAGE == 'ha' %}Yaya+zan+samu+takardar+fili+C-of-O%3F{% else %}How+do+I+get+a+Certificate+of+Occupancy%3F{% endif %}" class="prompt-chip">
+              <i class="bi bi-geo-alt-fill text-gold"></i>
+              <span>{% if UI_LANGUAGE == 'ha' %}Takardar Fili (C-of-O){% else %}Land &amp; Housing (C-of-O){% endif %}</span>
+            </a>
+            <a href="{% url 'chatbot:chat' %}?q={% if UI_LANGUAGE == 'ha' %}Ina+zan+samu+asibitin+gwamnati%3F{% else %}Where+is+the+nearest+state+hospital%3F{% endif %}" class="prompt-chip">
+              <i class="bi bi-heart-pulse-fill text-danger"></i>
+              <span>{% if UI_LANGUAGE == 'ha' %}Asibitoci &amp; Lafiya{% else %}Healthcare &amp; Clinics{% endif %}</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a class="btn btn-gov btn-lg" href="{% url 'chatbot:chat' %}"><i class="bi bi-chat-dots-fill me-2"></i>{% if UI_LANGUAGE == 'ha' %}Fara tambaya da Mai Taimako{% else %}Start Conversation with Assistant{% endif %}</a>
+          <a class="btn btn-outline-gov btn-lg" href="{% url 'faq:list' %}?language={{ UI_LANGUAGE }}"><i class="bi bi-search me-2"></i>{% if UI_LANGUAGE == 'ha' %}Bincika Tambayoyi (FAQ){% else %}Search FAQ Directory{% endif %}</a>
+        </div>
+        <div class="hero-trust d-flex flex-wrap gap-4 mt-4">
+          <span><i class="bi bi-translate text-gov-green"></i> {% if UI_LANGUAGE == 'ha' %}Hausa da Turanci{% else %}Hausa &amp; English Parity{% endif %}</span>
+          <span><i class="bi bi-shield-check text-gov-green"></i> {% if UI_LANGUAGE == 'ha' %}Ba a neman bayanan sirri (BVN/NIN/PIN){% else %}No sensitive personal data stored{% endif %}</span>
+          <span><i class="bi bi-patch-check-fill text-gov-gold"></i> {% if UI_LANGUAGE == 'ha' %}Majiyoyin hukuma kadai{% else %}100% Sourced by Ministries{% endif %}</span>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="hero-assistant-card" aria-label="Interactive Chatbot Preview">
+          <div class="assistant-card-head">
+            <span class="assistant-avatar"><i class="bi bi-bank2"></i></span>
+            <div>
+              <strong>{% if UI_LANGUAGE == 'ha' %}Mai Taimakon Nasarawa{% else %}Nasarawa Assistant{% endif %}</strong>
+              <small><i></i> {% if UI_LANGUAGE == 'ha' %}A shirye don amsa tambayoyinka{% else %}Active knowledge chamber{% endif %}</small>
+            </div>
+            <span class="assistant-badge">OFFICIAL · AI</span>
+          </div>
+          <div class="preview-conversation">
+            <div class="preview-bot">
+              <span class="bot-bubble-tag"><i class="bi bi-patch-check-fill text-gold"></i> {% if UI_LANGUAGE == 'ha' %}Gwamnati{% else %}Official Gov{% endif %}</span>
+              {% if UI_LANGUAGE == 'ha' %}Sannu! Wane aikin gwamnati kake son sani a Jihar Nasarawa?{% else %}Hello! Which Nasarawa State government service can I help you find today?{% endif %}
+            </div>
+            <div class="preview-user">
+              {% if UI_LANGUAGE == 'ha' %}Yaya zan nemi tallafin karatu na jihar?{% else %}How can I apply for a state scholarship?{% endif %}
+            </div>
+            <div class="preview-bot preview-answer">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="preview-cat-badge">EDUCATION · ILIMI</span>
+                <span class="preview-verified-badge"><i class="bi bi-check-circle-fill"></i> 98% Match</span>
+              </div>
+              <p class="mb-2">
+                {% if UI_LANGUAGE == 'ha' %}
+                  Hukumar Tallafin Karatu ta Jihar Nasarawa (Nasarawa State Scholarship Board) tana karɓar buƙatu ta hanyar shafinsu na yanar gizo...
+                {% else %}
+                  Applications are coordinated through the Nasarawa State Scholarship Board. Submissions open annually for eligible state indigenes...
+                {% endif %}
+              </p>
+              <div class="preview-source-pill">
+                <i class="bi bi-link-45deg"></i>
+                <span>scholarship.nasarawastate.gov.ng</span>
+                <i class="bi bi-box-arrow-up-right ms-auto"></i>
+              </div>
+            </div>
+          </div>
+          <a href="{% url 'chatbot:chat' %}" class="preview-input">
+            <span><i class="bi bi-keyboard me-2"></i>{% if UI_LANGUAGE == 'ha' %}Rubuta tambayarka anan…{% else %}Type your question here to ask…{% endif %}</span>
+            <span class="preview-send-icon"><i class="bi bi-arrow-right"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block services-section">
+  <div class="container-xl">
+    <div class="section-heading d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div><span class="eyebrow">{% if UI_LANGUAGE == 'ha' %}JERIN AYYUKA{% else %}SERVICE DIRECTORY{% endif %}</span><h2>{% if UI_LANGUAGE == 'ha' %}Me kake son yi?{% else %}What do you need to do?{% endif %}</h2></div>
+      <a href="{% url 'faq:list' %}?language={{ UI_LANGUAGE }}" class="text-link">{% if UI_LANGUAGE == 'ha' %}Duba dukkan ayyuka{% else %}Browse all services{% endif %} <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-3 mt-2">
+      {% for category in categories %}
+        <div class="col-sm-6 col-lg-3">
+          <a class="service-card h-100" href="{% url 'faq:list' %}?category={{ category.slug }}&amp;language={{ UI_LANGUAGE }}">
+            <span class="service-icon"><i class="bi {{ category.icon }}"></i></span>
+            <span class="service-copy"><strong>{% if UI_LANGUAGE == 'ha' %}{{ category.name_ha }}{% else %}{{ category.name_en }}{% endif %}</strong><small>{% if UI_LANGUAGE == 'ha' %}{{ category.description_ha|truncatewords:12 }}{% else %}{{ category.description_en|truncatewords:12 }}{% endif %}</small></span>
+            <span class="service-count">{{ category.published_count }}</span>
+          </a>
+        </div>
+      {% empty %}
+        <div class="col-12"><div class="empty-state"><i class="bi bi-journal-text"></i><p>{% if UI_LANGUAGE == 'ha' %}Za a nuna rukunin ayyuka bayan an wallafa su daga dashboard na gudanarwa.{% else %}Service categories will appear after administrators publish them.{% endif %}</p></div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section-block faq-preview-section">
+  <div class="container-xl">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <span class="eyebrow">{% if UI_LANGUAGE == 'ha' %}TAMBAYOYIN DA AKA FI YI{% else %}COMMON QUESTIONS{% endif %}</span>
+        <h2>{% if UI_LANGUAGE == 'ha' %}Amsa mai tushe, ba zato ba.{% else %}Sourced answers, not guesses.{% endif %}</h2>
+        <p>{% if UI_LANGUAGE == 'ha' %}Kowace amsa da aka tabbatar tana nuna hukumar ko shafin da bayanin ya fito.{% else %}Every verified answer identifies the agency or official page from which the information came.{% endif %}</p>
+        <a href="{% url 'faq:list' %}?language={{ UI_LANGUAGE }}" class="btn btn-outline-gov">{% if UI_LANGUAGE == 'ha' %}Bincika cikakken FAQ{% else %}Search the full FAQ{% endif %}</a>
+      </div>
+      <div class="col-lg-8">
+        <div class="accordion gov-accordion" id="featuredFaqs">
+          {% for faq in featured_faqs %}
+            <div class="accordion-item">
+              <h3 class="accordion-header"><button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ faq.pk }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">{% if UI_LANGUAGE == 'ha' %}{{ faq.question_ha }}{% else %}{{ faq.question_en }}{% endif %}</button></h3>
+              <div id="faq{{ faq.pk }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#featuredFaqs"><div class="accordion-body"><p>{% if UI_LANGUAGE == 'ha' %}{{ faq.answer_ha|truncatewords:48 }}{% else %}{{ faq.answer_en|truncatewords:48 }}{% endif %}</p><a href="{{ faq.get_absolute_url }}?language={{ UI_LANGUAGE }}">{% if UI_LANGUAGE == 'ha' %}Karanta cikakken bayani{% else %}Read full guidance{% endif %} <i class="bi bi-arrow-right"></i></a></div></div>
+            </div>
+          {% empty %}
+            <div class="empty-state"><i class="bi bi-patch-question"></i><p>{% if UI_LANGUAGE == 'ha' %}Babu FAQ da aka wallafa tukuna.{% else %}No FAQs have been published yet.{% endif %}</p></div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="safe-use-strip">
+  <div class="container-xl">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-8 d-flex gap-3 align-items-start"><span class="safe-icon"><i class="bi bi-shield-lock"></i></span><div><h2>{% if UI_LANGUAGE == 'ha' %}Ka yi amfani da manhajar cikin aminci{% else %}Use the assistant safely{% endif %}</h2><p>{% if UI_LANGUAGE == 'ha' %}Ba ma neman kalmar sirri, BVN, NIN, PIN ko bayanan banki. Idan wani ya buƙaci waɗannan a chat, kada ka bayar.{% else %}We do not ask for passwords, BVN, NIN, PINs or banking details. If anyone requests them in chat, do not provide them.{% endif %}</p></div></div>
+      <div class="col-lg-4 text-lg-end"><a class="btn btn-light" href="{% url 'chatbot:chat' %}">{% if UI_LANGUAGE == 'ha' %}Buɗe mai taimako{% else %}Open the assistant{% endif %} <i class="bi bi-arrow-up-right ms-1"></i></a></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

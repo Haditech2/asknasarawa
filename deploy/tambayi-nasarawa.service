@@ -1,0 +1,22 @@
+[Unit]
+Description=Tambayi Nasarawa Django application
+After=network.target postgresql.service redis-server.service
+
+[Service]
+Type=notify
+User=tambayi
+Group=www-data
+WorkingDirectory=/srv/tambayi-nasarawa
+EnvironmentFile=/srv/tambayi-nasarawa/.env
+ExecStart=/srv/tambayi-nasarawa/.venv/bin/gunicorn config.wsgi:application --config deploy/gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=30
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if language == 'ha' %}Binciken Tambayoyi{% else %}Government FAQ Search{% endif %} — Tambayi Nasarawa{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-compact">
+  <div class="container-xl">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'core:home' %}?language={{ language }}">{% if language == 'ha' %}Gida{% else %}Home{% endif %}</a></li><li class="breadcrumb-item active" aria-current="page">FAQ</li></ol></nav>
+    <div class="row align-items-end g-4">
+      <div class="col-lg-7"><span class="eyebrow">{% if language == 'ha' %}BAYANAN AYYUKAN GWAMNATI{% else %}GOVERNMENT SERVICE KNOWLEDGE BASE{% endif %}</span><h1>{% if language == 'ha' %}Nemo amsar da aka tabbatar.{% else %}Find a verified answer.{% endif %}</h1><p>{% if language == 'ha' %}Bincika da kalma ko ka tace bisa rukunin aikin gwamnati.{% else %}Search by keyword or filter by government service category.{% endif %}</p></div>
+      <div class="col-lg-5 text-lg-end"><a href="{% url 'chatbot:chat' %}" class="btn btn-gov"><i class="bi bi-chat-dots me-2"></i>{% if language == 'ha' %}Yi tambaya a chat{% else %}Ask in chat{% endif %}</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block faq-search-page">
+  <div class="container-xl">
+    <form class="faq-search-form" id="faqSearchForm" method="get" action="{% url 'faq:list' %}" data-search-url="/api/faq/search/">
+      <div class="row g-2">
+        <div class="col-lg-7"><label class="visually-hidden" for="faqQuery">{% if language == 'ha' %}Kalmar bincike{% else %}Search term{% endif %}</label><div class="search-input-wrap"><i class="bi bi-search"></i><input type="search" class="form-control" id="faqQuery" name="q" value="{{ query }}" maxlength="500" placeholder="{% if language == 'ha' %}Misali: tallafin karatu ko haraji{% else %}For example: scholarship or tax registration{% endif %}"></div></div>
+        <div class="col-sm-7 col-lg-3"><label class="visually-hidden" for="faqCategory">Category</label><select class="form-select" id="faqCategory" name="category"><option value="">{% if language == 'ha' %}Dukkan rukuni{% else %}All categories{% endif %}</option>{% for category in categories %}<option value="{{ category.slug }}" {% if selected_category == category.slug %}selected{% endif %}>{% if language == 'ha' %}{{ category.name_ha }}{% else %}{{ category.name_en }}{% endif %}</option>{% endfor %}</select></div>
+        <div class="col-5 col-lg-2"><input type="hidden" id="faqLanguage" name="language" value="{{ language }}"><button class="btn btn-gov w-100" type="submit">{% if language == 'ha' %}Bincika{% else %}Search{% endif %}</button></div>
+      </div>
+    </form>
+
+    <div class="category-filter-pills mt-3 d-flex flex-wrap gap-2" aria-label="Filter by category">
+      <a href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}language={{ language }}" class="cat-pill {% if not selected_category %}active{% endif %}">
+        {% if language == 'ha' %}Dukkan Rukuni{% else %}All Categories{% endif %}
+      </a>
+      {% for category in categories %}
+        <a href="?category={{ category.slug }}{% if query %}&amp;q={{ query|urlencode }}{% endif %}&amp;language={{ language }}" class="cat-pill {% if selected_category == category.slug %}active{% endif %}">
+          <i class="bi {{ category.icon }} me-1"></i>
+          {% if language == 'ha' %}{{ category.name_ha }}{% else %}{{ category.name_en }}{% endif %}
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="search-summary d-flex justify-content-between align-items-center gap-3 flex-wrap">
+      <p id="searchSummary">{% if query %}{% if language == 'ha' %}Sakamako don “{{ query }}”{% else %}Results for “{{ query }}”{% endif %}{% else %}{% if language == 'ha' %}Dukkan tambayoyin da aka wallafa{% else %}All published questions{% endif %}{% endif %}</p>
+      <div class="language-switch faq-language-switch"><a href="?q={{ query|urlencode }}&amp;category={{ selected_category }}&amp;language=en" class="{% if language == 'en' %}active{% endif %}">EN</a><a href="?q={{ query|urlencode }}&amp;category={{ selected_category }}&amp;language=ha" class="{% if language == 'ha' %}active{% endif %}">HA</a></div>
+    </div>
+
+    <div id="faqSearchStatus" class="visually-hidden" role="status" aria-live="polite"></div>
+    <div class="faq-results" id="faqResults">
+      {% for faq in faqs %}
+        <article class="faq-result-card">
+          <div class="faq-result-main">
+            <div class="d-flex align-items-center gap-2 mb-2"><span class="category-chip"><i class="bi {{ faq.category.icon }}"></i> {% if language == 'ha' %}{{ faq.category.name_ha }}{% else %}{{ faq.category.name_en }}{% endif %}</span>{% if faq.verification_status == 'verified' %}<span class="verified-chip"><i class="bi bi-patch-check-fill"></i> {% if language == 'ha' %}An tabbatar{% else %}Verified{% endif %}</span>{% else %}<span class="awaiting-chip"><i class="bi bi-clock"></i> {% if language == 'ha' %}Ana jiran tabbaci{% else %}Awaiting confirmation{% endif %}</span>{% endif %}</div>
+            <h2><a href="{{ faq.get_absolute_url }}?language={{ language }}">{% if language == 'ha' %}{{ faq.question_ha }}{% else %}{{ faq.question_en }}{% endif %}</a></h2>
+            <p>{% if language == 'ha' %}{{ faq.answer_ha|truncatewords:42 }}{% else %}{{ faq.answer_en|truncatewords:42 }}{% endif %}</p>
+          </div>
+          <a class="faq-result-arrow" href="{{ faq.get_absolute_url }}?language={{ language }}" aria-label="Open answer"><i class="bi bi-arrow-right"></i></a>
+        </article>
+      {% empty %}
+        <div class="empty-state search-empty"><i class="bi bi-search"></i><h2>{% if language == 'ha' %}Ba a sami amsa ba{% else %}No matching FAQ found{% endif %}</h2><p>{% if language == 'ha' %}Ka gwada wata kalma ko ka yi tambaya a chatbot.{% else %}Try a different keyword or ask the chatbot so administrators can review the question.{% endif %}</p><a href="{% url 'chatbot:chat' %}" class="btn btn-outline-gov">{% if language == 'ha' %}Yi tambaya{% else %}Ask the assistant{% endif %}</a></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/faq-search.js' %}" defer></script>{% endblock %}

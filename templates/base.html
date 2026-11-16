@@ -1,0 +1,136 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ UI_LANGUAGE|default:'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hausa-English guidance for Nasarawa State government services.">
+  <meta name="theme-color" content="#075b45">
+  <title>{% block title %}Tambayi Nasarawa{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main-content">
+    {% if UI_LANGUAGE == 'ha' %}Tsallaka zuwa babban bayani{% else %}Skip to main content{% endif %}
+  </a>
+
+  <div class="official-strip">
+    <div class="container-xl d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <span class="official-badge-pulse"><i class="bi bi-patch-check-fill" aria-hidden="true"></i></span>
+        <span>
+          {% if UI_LANGUAGE == 'ha' %}
+            <strong>Jihar Nasarawa</strong> · Sashen Bayanan Jama’a na Gwamnati
+          {% else %}
+            <strong>Nasarawa State</strong> · Official Citizen Guidance Portal
+          {% endif %}
+        </span>
+        <span class="d-none d-md-inline text-gold-accent ms-2 opacity-75">| Home of Solid Minerals</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="d-none d-sm-inline opacity-75">{% if UI_LANGUAGE == 'ha' %}Bayanai kawai{% else %}Official info only{% endif %}</span>
+        <a href="tel:112" class="emergency-link"><i class="bi bi-telephone-fill me-1" aria-hidden="true"></i>
+          {% if UI_LANGUAGE == 'ha' %}Gaggawa: 112{% else %}Emergency: 112{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header sticky-top">
+    <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+      <div class="container-xl">
+        <a class="navbar-brand gov-brand" href="{% url 'core:home' %}?language={{ UI_LANGUAGE }}">
+          <span class="gov-mark" aria-hidden="true"><i class="bi bi-bank2"></i></span>
+          <span>
+            <strong>Tambayi Nasarawa</strong>
+            <small>{% if UI_LANGUAGE == 'ha' %}Mai taimako kan ayyukan gwamnati{% else %}Government services assistant{% endif %}</small>
+          </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="siteNav">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+            <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}?language={{ UI_LANGUAGE }}">{% if UI_LANGUAGE == 'ha' %}Gida{% else %}Home{% endif %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'faq:list' %}?language={{ UI_LANGUAGE }}">{% if UI_LANGUAGE == 'ha' %}Binciken FAQ{% else %}FAQ search{% endif %}</a></li>
+            <li class="nav-item"><a class="nav-link chat-nav-link" href="{% url 'chatbot:chat' %}"><i class="bi bi-chat-dots me-1"></i>{% if UI_LANGUAGE == 'ha' %}Tambayi mai taimako{% else %}Ask the assistant{% endif %}</a></li>
+            {% if user.is_authenticated and perms.analytics.view_analytics_dashboard %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:index' %}">{% if UI_LANGUAGE == 'ha' %}Rahotanni{% else %}Analytics{% endif %}</a></li>
+            {% endif %}
+            {% if user.is_staff %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+            {% endif %}
+            <li class="nav-item ms-lg-2">
+              <div class="language-switch" aria-label="Language">
+                <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&amp;{% endif %}language=en" class="{% if UI_LANGUAGE == 'en' %}active{% endif %}" lang="en">EN</a>
+                <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&amp;{% endif %}language=ha" class="{% if UI_LANGUAGE == 'ha' %}active{% endif %}" lang="ha">HA</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  {% if messages %}
+    <div class="container-xl mt-3" aria-live="polite">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main id="main-content">{% block content %}{% endblock %}</main>
+
+  {% block footer %}
+  <footer class="site-footer">
+    <div class="container-xl">
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-5">
+          <div class="d-flex gap-3 align-items-center mb-3">
+            <span class="gov-mark gov-mark-sm" aria-hidden="true"><i class="bi bi-bank2"></i></span>
+            <strong class="footer-brand">Tambayi Nasarawa</strong>
+          </div>
+          <p class="footer-note">
+            {% if UI_LANGUAGE == 'ha' %}
+              Wannan manhaja tana bayar da bayanai ne kawai. Ba shafin neman aiki, biyan kuɗi ko aika takardun sirri ba ne.
+            {% else %}
+              This assistant provides information only. It is not an application, payment or personal-document submission portal.
+            {% endif %}
+          </p>
+        </div>
+        <div class="col-6 col-lg-3 offset-lg-1">
+          <h2>{% if UI_LANGUAGE == 'ha' %}Hanyoyi{% else %}Explore{% endif %}</h2>
+          <ul>
+            <li><a href="{% url 'faq:list' %}?language={{ UI_LANGUAGE }}">{% if UI_LANGUAGE == 'ha' %}Dukkan tambayoyi{% else %}All FAQs{% endif %}</a></li>
+            <li><a href="{% url 'chatbot:chat' %}">{% if UI_LANGUAGE == 'ha' %}Buɗe tattaunawa{% else %}Open chatbot{% endif %}</a></li>
+            {% if OFFICIAL_ENQUIRY_URL %}<li><a href="{{ OFFICIAL_ENQUIRY_URL }}" target="_blank" rel="noreferrer">{% if UI_LANGUAGE == 'ha' %}Tuntuɓar hukuma{% else %}Official contacts{% endif %}</a></li>{% endif %}
+          </ul>
+        </div>
+        <div class="col-6 col-lg-3">
+          <h2>{% if UI_LANGUAGE == 'ha' %}Tsaro{% else %}Safety{% endif %}</h2>
+          <p>{% if UI_LANGUAGE == 'ha' %}Kada ka saka kalmar sirri, BVN, NIN, PIN ko bayanan banki a tattaunawa.{% else %}Never enter a password, BVN, NIN, card PIN or banking details in chat.{% endif %}</p>
+        </div>
+      </div>
+      <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2">
+        <span>&copy; {% now "Y" %} Tambayi Nasarawa</span>
+        <span>{% if UI_LANGUAGE == 'ha' %}Hausa · English{% else %}English · Hausa{% endif %}</span>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/site.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator sign in — Tambayi Nasarawa{% endblock %}
+
+{% block content %}
+<section class="login-page">
+  <div class="container">
+    <div class="login-card mx-auto">
+      <span class="gov-mark mx-auto mb-3"><i class="bi bi-person-lock"></i></span>
+      <div class="text-center mb-4"><span class="eyebrow">AUTHORIZED ACCESS</span><h1>Administrator sign in</h1><p>Use your government administration account.</p></div>
+      {% if form.errors %}<div class="alert alert-danger">Your username or password was not accepted.</div>{% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="mb-3">
+          <label class="form-label" for="id_username">Username</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person"></i></span>
+            <input class="form-control border-start-0 ps-1" type="text" name="username" id="id_username" autocomplete="username" required autofocus placeholder="Enter official username">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="id_password">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-key"></i></span>
+            <input class="form-control border-start-0 border-end-0 ps-1" type="password" name="password" id="id_password" autocomplete="current-password" required placeholder="Enter password">
+            <button class="btn btn-outline-secondary border-start-0 bg-white text-muted" type="button" id="togglePassword" aria-label="Toggle password visibility"><i class="bi bi-eye" id="togglePasswordIcon"></i></button>
+          </div>
+        </div>
+        <button class="btn btn-gov w-100 py-2" type="submit"><i class="bi bi-shield-lock me-1"></i> Sign in securely</button>
+      </form>
+      <p class="login-help"><i class="bi bi-shield-check text-gov-green"></i> Access is audit-logged and restricted to authorized state personnel.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById("togglePassword")?.addEventListener("click", function() {
+    const pwd = document.getElementById("id_password");
+    const icon = document.getElementById("togglePasswordIcon");
+    if (pwd && icon) {
+      if (pwd.type === "password") {
+        pwd.type = "text";
+        icon.className = "bi bi-eye-slash";
+      } else {
+        pwd.type = "password";
+        icon.className = "bi bi-eye";
+      }
+    }
+  });
+</script>
+{% endblock %}

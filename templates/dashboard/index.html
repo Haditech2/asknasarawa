@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Analytics dashboard — Tambayi Nasarawa{% endblock %}
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<section class="dashboard-header">
+  <div class="container-xl d-flex flex-wrap justify-content-between align-items-end gap-3">
+    <div><span class="eyebrow">ADMINISTRATION</span><h1>Chatbot usage analytics</h1><p>Aggregated service demand and content performance. Raw personal details are not required.</p></div>
+    <div class="d-flex gap-2"><label class="visually-hidden" for="analyticsPeriod">Reporting period</label><select class="form-select" id="analyticsPeriod"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select><a href="{% url 'admin:index' %}" class="btn btn-outline-gov text-nowrap"><i class="bi bi-gear me-1"></i> Manage content</a></div>
+  </div>
+</section>
+
+<section class="dashboard-content">
+  <div class="container-xl" id="analyticsDashboard" data-api-url="/api/analytics/">
+    <div class="row g-3 metric-row">
+      <div class="col-6 col-xl"><div class="metric-card"><span class="metric-icon green"><i class="bi bi-chat-square-dots"></i></span><div><small>Conversations</small><strong id="metricConversations">{{ snapshot.totals.conversations }}</strong></div></div></div>
+      <div class="col-6 col-xl"><div class="metric-card"><span class="metric-icon blue"><i class="bi bi-question-circle"></i></span><div><small>Questions asked</small><strong id="metricQuestions">{{ snapshot.totals.questions }}</strong></div></div></div>
+      <div class="col-6 col-xl"><div class="metric-card"><span class="metric-icon gold"><i class="bi bi-search"></i></span><div><small>FAQ searches</small><strong id="metricSearches">{{ snapshot.totals.searches }}</strong></div></div></div>
+      <div class="col-6 col-xl"><div class="metric-card"><span class="metric-icon red"><i class="bi bi-exclamation-circle"></i></span><div><small>Unanswered</small><strong id="metricUnanswered">{{ snapshot.totals.unanswered }}</strong></div></div></div>
+      <div class="col-6 col-xl"><div class="metric-card"><span class="metric-icon purple"><i class="bi bi-journal-check"></i></span><div><small>Published FAQs</small><strong id="metricPublished">{{ snapshot.totals.published_faqs }}</strong></div></div></div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-xl-8"><div class="dashboard-card"><div class="dashboard-card-head"><div><span>USAGE TREND</span><h2>Questions by day</h2></div><small id="chartPeriodLabel">30-day view</small></div><div class="chart-wrap"><canvas id="dailyChart" aria-label="Daily questions chart"></canvas></div></div></div>
+      <div class="col-xl-4"><div class="dashboard-card"><div class="dashboard-card-head"><div><span>LANGUAGE</span><h2>English vs Hausa</h2></div></div><div class="chart-wrap chart-wrap-small"><canvas id="languageChart" aria-label="Language usage chart"></canvas></div><div class="language-legend" id="languageLegend"></div></div></div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-7"><div class="dashboard-card h-100"><div class="dashboard-card-head"><div><span>KNOWLEDGE DEMAND</span><h2>Most frequently matched FAQs</h2></div><a href="{% url 'admin:faq_faq_changelist' %}">Manage FAQs <i class="bi bi-arrow-right"></i></a></div><div class="table-responsive"><table class="table dashboard-table"><thead><tr><th>Question</th><th class="text-end">Matches</th></tr></thead><tbody id="topFaqTable">{% for row in snapshot.top_faqs %}<tr><td>{{ row.matched_faq__question_en }}</td><td class="text-end"><span>{{ row.count }}</span></td></tr>{% empty %}<tr><td colspan="2" class="empty-cell">No matched questions in this period.</td></tr>{% endfor %}</tbody></table></div></div></div>
+      <div class="col-lg-5"><div class="dashboard-card h-100"><div class="dashboard-card-head"><div><span>CONTENT GAPS</span><h2>Unanswered questions</h2></div><a href="{% url 'admin:chatbot_unansweredquestion_changelist' %}">Review <i class="bi bi-arrow-right"></i></a></div><div class="unanswered-summary" id="unansweredSummary">{% for row in snapshot.unanswered_by_status %}<div><span>{{ row.status|title }}</span><strong>{{ row.count }}</strong></div>{% empty %}<div class="empty-cell">No unanswered questions in this period.</div>{% endfor %}</div><div class="admin-callout"><i class="bi bi-lightbulb"></i><p>Review unanswered questions and convert recurring information needs into draft bilingual FAQs.</p></div></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chat — Tambayi Nasarawa{% endblock %}
+{% block body_class %}chat-page{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="chat-workspace"
+     id="chatApp"
+     data-message-url="/api/chat/message/"
+     data-history-url="/api/chat/history/"
+     data-feedback-url="/api/chat/feedback/"
+     data-clear-url="/api/chat/clear/"
+     data-faq-url="/api/faq/"
+     data-category-url="/api/faq/categories/">
+  <div class="container-fluid container-chat">
+    <div class="chat-grid">
+      <aside class="chat-sidebar" aria-label="Service categories">
+        <div class="chat-sidebar-title">
+          <span data-i18n="directory">Service directory</span>
+          <small data-i18n="directoryHelp">Choose a topic to guide your question.</small>
+        </div>
+        <nav class="chat-categories" id="chatCategories">
+          <button type="button" class="chat-category active" data-category="">
+            <span><i class="bi bi-grid"></i></span>
+            <strong data-i18n="allServices">All services</strong>
+          </button>
+          {% for category in categories %}
+            <button type="button" class="chat-category" data-category="{{ category.slug }}" data-name-en="{{ category.name_en }}" data-name-ha="{{ category.name_ha }}">
+              <span><i class="bi {{ category.icon }}"></i></span>
+              <strong class="category-label">{{ category.name_en }}</strong>
+              <small>{{ category.faq_count }}</small>
+            </button>
+          {% endfor %}
+        </nav>
+        <div class="chat-privacy-note">
+          <i class="bi bi-shield-check"></i>
+          <div><strong data-i18n="privacyTitle">Privacy first</strong><p data-i18n="privacyText">Do not enter passwords, NIN, BVN or bank details.</p></div>
+        </div>
+      </aside>
+
+      <section class="chat-shell" aria-label="Government services conversation">
+        <header class="chat-header">
+          <div class="d-flex align-items-center gap-2">
+            <span class="assistant-avatar assistant-avatar-sm"><i class="bi bi-bank2"></i><i class="live-dot"></i></span>
+            <div class="chat-identity">
+              <strong data-i18n="assistantName">Nasarawa Assistant</strong>
+              <small><i></i> <span data-i18n="ready">Ready to help</span></small>
+            </div>
+            <span class="chat-active-topic-badge ms-2 d-none d-sm-inline-flex" id="activeTopicBadge">
+              <i class="bi bi-tag-fill me-1"></i> <span id="activeTopicLabel" data-i18n="allServices">All services</span>
+            </span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <div class="chat-language-control" role="group" aria-label="Chat language">
+              <button type="button" data-language="en">EN</button><button type="button" data-language="ha">HA</button>
+            </div>
+            <button type="button" class="chat-clear-btn" id="clearChat" title="Clear conversation"><i class="bi bi-arrow-counterclockwise"></i><span data-i18n="clear">Clear</span></button>
+          </div>
+        </header>
+
+        <div class="messages-pane" id="messagesPane" role="log" aria-live="polite" aria-relevant="additions">
+          <div class="chat-message bot-message welcome-message" data-static-welcome>
+            <span class="message-avatar"><i class="bi bi-bank2"></i></span>
+            <div class="message-column">
+              <div class="welcome-panel">
+                <span class="welcome-kicker"><i class="bi bi-stars"></i> <span data-i18n="welcomeKicker">WELCOME · SANNU</span></span>
+                <h1 data-i18n="welcomeTitle">Find the right government service, faster.</h1>
+                <p data-i18n="welcomeText">Ask in English or Hausa. I will answer only when the FAQ knowledge base has a reliable match.</p>
+                <hr>
+                <strong class="suggestions-label" data-i18n="popular">Popular questions</strong>
+                <div class="welcome-suggestions" id="welcomeSuggestions">
+                  {% for faq in suggestions %}
+                    <button type="button" class="suggestion-button" data-faq-id="{{ faq.pk }}" data-question-en="{{ faq.question_en }}" data-question-ha="{{ faq.question_ha }}"><span class="suggestion-text">{{ faq.question_en }}</span><i class="bi bi-chevron-right"></i></button>
+                  {% empty %}
+                    <span class="no-suggestions" data-i18n="noPublished">Published suggestions will appear here.</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <time class="message-time">{% now "H:i" %}</time>
+            </div>
+          </div>
+        </div>
+
+        <div class="typing-row d-none" id="typingIndicator" aria-label="Assistant is typing">
+          <span class="message-avatar"><i class="bi bi-bank2"></i></span>
+          <span class="typing-dots"><i></i><i></i><i></i></span>
+        </div>
+
+        <div class="chat-composer-wrap">
+          <div class="composer-quick-chips" id="composerQuickChips">
+            <span class="quick-chip-label"><i class="bi bi-lightning-charge-fill text-gold"></i></span>
+            <button type="button" class="composer-chip" data-question-en="How can I apply for a scholarship?" data-question-ha="Yaya zan nemi tallafin karatu?">
+              <i class="bi bi-mortarboard me-1"></i><span class="chip-txt">Scholarships</span>
+            </button>
+            <button type="button" class="composer-chip" data-question-en="How do I get a tax clearance certificate?" data-question-ha="Yaya ake samun takardar biyan haraji?">
+              <i class="bi bi-receipt me-1"></i><span class="chip-txt">Tax Clearance</span>
+            </button>
+            <button type="button" class="composer-chip" data-question-en="How do I apply for Certificate of Occupancy (C-of-O)?" data-question-ha="Yaya zan nemi takardar fili ta C-of-O?">
+              <i class="bi bi-house-check me-1"></i><span class="chip-txt">Land C-of-O</span>
+            </button>
+            <button type="button" class="composer-chip" data-question-en="Where can I access free maternal health services?" data-question-ha="Ina zan samu tallafin lafiyar mata da ƙananan yara?">
+              <i class="bi bi-heart-pulse me-1"></i><span class="chip-txt">Healthcare</span>
+            </button>
+          </div>
+          <div class="privacy-warning d-none" id="redactionNotice" role="status"></div>
+          <form class="chat-composer" id="chatForm">
+            <label class="visually-hidden" for="chatInput" data-i18n="inputLabel">Ask a government service question</label>
+            <i class="bi bi-chat-left-text" aria-hidden="true"></i>
+            <input id="chatInput" name="message" type="text" maxlength="1000" autocomplete="off" data-i18n-placeholder="placeholder" placeholder="Ask about scholarships, healthcare, tax…" required>
+            <button type="submit" id="sendMessage"><span data-i18n="send">Send</span><i class="bi bi-send-fill"></i></button>
+          </form>
+          <p class="composer-note"><i class="bi bi-info-circle"></i> <span data-i18n="disclaimer">Information only — not an application or payment portal.</span></p>
+        </div>
+      </section>
+
+      <aside class="chat-info-rail">
+        <div class="info-rail-card">
+          <span class="rail-kicker" data-i18n="howTitle">How this assistant works</span>
+          <ol class="how-list">
+            <li><span>1</span><p data-i18n="howOne">Ask one clear service question.</p></li>
+            <li><span>2</span><p data-i18n="howTwo">The system checks published bilingual FAQs.</p></li>
+            <li><span>3</span><p data-i18n="howThree">Open the cited official source to continue.</p></li>
+          </ol>
+        </div>
+        <div class="info-rail-card official-source-card">
+          <i class="bi bi-patch-check"></i>
+          <h2 data-i18n="accuracyTitle">Accuracy before answers</h2>
+          <p data-i18n="accuracyText">If no reliable answer is available, the assistant records the question for review instead of guessing.</p>
+        </div>
+        {% if OFFICIAL_ENQUIRY_EMAIL or OFFICIAL_ENQUIRY_URL %}
+          <div class="info-rail-card contact-rail-card">
+            <i class="bi bi-headset"></i>
+            <h2 data-i18n="humanHelp">Need human help?</h2>
+            <p data-i18n="humanHelpText">Use the verified government enquiry channel for a case-specific question.</p>
+            {% if OFFICIAL_ENQUIRY_URL %}<a href="{{ OFFICIAL_ENQUIRY_URL }}" target="_blank" rel="noreferrer"><span data-i18n="officialContacts">Official contacts</span> <i class="bi bi-arrow-up-right"></i></a>{% elif OFFICIAL_ENQUIRY_EMAIL %}<a href="mailto:{{ OFFICIAL_ENQUIRY_EMAIL }}">{{ OFFICIAL_ENQUIRY_EMAIL }} <i class="bi bi-arrow-up-right"></i></a>{% endif %}
+          </div>
+        {% endif %}
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="languageChoiceModal" tabindex="-1" aria-labelledby="languageChoiceTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content language-modal">
+      <div class="modal-body text-center p-4">
+        <span class="gov-mark mx-auto mb-3" aria-hidden="true"><i class="bi bi-translate"></i></span>
+        <h2 id="languageChoiceTitle">Choose your language</h2>
+        <p>Zaɓi harshen da kake so</p>
+        <div class="d-grid gap-2 mt-4">
+          <button type="button" class="btn btn-gov language-choice" data-language="en"><strong>English</strong><small>Continue in English</small></button>
+          <button type="button" class="btn btn-outline-gov language-choice" data-language="ha"><strong>Hausa</strong><small>Ci gaba da Hausa</small></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/chat.js' %}" defer></script>{% endblock %}

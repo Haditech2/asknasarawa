@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{% if language == 'ha' %}{{ faq.question_ha }}{% else %}{{ faq.question_en }}{% endif %} — Tambayi Nasarawa{% endblock %}
+
+{% block content %}
+<section class="faq-detail-page">
+  <div class="container-xl">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'core:home' %}?language={{ language }}">{% if language == 'ha' %}Gida{% else %}Home{% endif %}</a></li><li class="breadcrumb-item"><a href="{% url 'faq:list' %}?language={{ language }}">FAQ</a></li><li class="breadcrumb-item active" aria-current="page">{% if language == 'ha' %}Amsa{% else %}Answer{% endif %}</li></ol></nav>
+    <div class="row g-5">
+      <div class="col-lg-8">
+        <article class="faq-detail-card">
+          <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+              <span class="category-chip"><i class="bi {{ faq.category.icon }}"></i> {% if language == 'ha' %}{{ faq.category.name_ha }}{% else %}{{ faq.category.name_en }}{% endif %}</span>
+              {% if faq.verification_status == 'verified' %}
+                <span class="verified-chip"><i class="bi bi-patch-check-fill"></i> {% if language == 'ha' %}An tabbatar daga majiya ta hukuma{% else %}Verified from official source{% endif %}</span>
+              {% else %}
+                <span class="awaiting-chip"><i class="bi bi-clock"></i> {% if language == 'ha' %}Ana jiran tabbacin hukuma{% else %}Awaiting official confirmation{% endif %}</span>
+              {% endif %}
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary copy-link-btn" id="copyFaqLink" title="Copy link">
+              <i class="bi bi-link-45deg me-1"></i><span>{% if language == 'ha' %}Kwafi adireshin{% else %}Copy link{% endif %}</span>
+            </button>
+          </div>
+          <h1>{% if language == 'ha' %}{{ faq.question_ha }}{% else %}{{ faq.question_en }}{% endif %}</h1>
+          <div class="faq-answer-text">{% if language == 'ha' %}{{ faq.answer_ha|linebreaks }}{% else %}{{ faq.answer_en|linebreaks }}{% endif %}</div>
+          {% if faq.verification_status == 'awaiting' %}<div class="confirmation-warning"><i class="bi bi-exclamation-triangle-fill"></i><p>{% if language == 'ha' %}<strong>A lura:</strong> Wannan bayanin yana jiran tabbacin hukumar da ta dace. Kada ka ɗauke shi a matsayin ƙa’idar hukuma tukuna.{% else %}<strong>Please note:</strong> This information is awaiting confirmation by the responsible agency. Do not treat it as official policy yet.{% endif %}</p></div>{% endif %}
+          {% if faq.source_url %}<a class="official-source-link" href="{{ faq.source_url }}" target="_blank" rel="noreferrer"><span><small>{% if language == 'ha' %}MAJIYAR HUKUMA{% else %}OFFICIAL SOURCE{% endif %}</small><strong>{{ faq.source_name|default:faq.source_url }}</strong></span><i class="bi bi-arrow-up-right"></i></a>{% endif %}
+          <div class="faq-meta"><span>{% if language == 'ha' %}An sabunta{% else %}Updated{% endif %}: {{ faq.updated_at|date:"j M Y" }}</span>{% if faq.last_verified_at %}<span>{% if language == 'ha' %}An sake dubawa{% else %}Last verified{% endif %}: {{ faq.last_verified_at|date:"j M Y" }}</span>{% endif %}</div>
+        </article>
+      </div>
+      <aside class="col-lg-4">
+        <div class="related-card"><h2>{% if language == 'ha' %}Tambayoyi masu alaƙa{% else %}Related questions{% endif %}</h2><div class="related-list">{% for related in related_faqs %}<a href="{{ related.get_absolute_url }}?language={{ language }}"><span>{% if language == 'ha' %}{{ related.question_ha }}{% else %}{{ related.question_en }}{% endif %}</span><i class="bi bi-chevron-right"></i></a>{% empty %}<p>{% if language == 'ha' %}Babu wata tambaya a wannan rukuni tukuna.{% else %}No other published questions in this category yet.{% endif %}</p>{% endfor %}</div><a href="{% url 'chatbot:chat' %}" class="btn btn-gov w-100 mt-3"><i class="bi bi-chat-dots me-2"></i>{% if language == 'ha' %}Yi wata tambaya{% else %}Ask another question{% endif %}</a></div>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById("copyFaqLink")?.addEventListener("click", function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      const span = this.querySelector("span");
+      const prev = span.textContent;
+      span.textContent = "{{ language }}" === "ha" ? "An kwafa!" : "Copied!";
+      setTimeout(() => { span.textContent = prev; }, 2000);
+    }
+  });
+</script>
+{% endblock %}
