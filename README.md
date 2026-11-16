@@ -252,8 +252,10 @@ SQLite files are ephemeral in serverless deployments.
    Add the custom domain to both `DJANGO_ALLOWED_HOSTS` and
    `DJANGO_CSRF_TRUSTED_ORIGINS` if one is configured.
 5. Deploy with `vercel --prod`.
-6. Run migrations against the production database from a machine with the
-   production variables loaded:
+   The Vercel build runs Django migrations automatically before collecting
+   static files.
+6. Create the first administrator against the production database from a
+   machine with the production variables loaded:
 
    ```bash
    python manage.py migrate
