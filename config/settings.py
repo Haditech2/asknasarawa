@@ -7,6 +7,7 @@ the project without a PostgreSQL server.
 from __future__ import annotations
 
 import os
+from urllib.parse import parse_qs, unquote, urlparse
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -100,8 +101,28 @@ TEMPLATES = [
     },
 ]
 
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").strip().lower()
-if DB_ENGINE in {"postgres", "postgresql", "psql"}:
+if DATABASE_URL:
+    database_url = urlparse(DATABASE_URL)
+    if database_url.scheme not in {"postgres", "postgresql"}:
+        raise ImproperlyConfigured("DATABASE_URL must use the postgres:// or postgresql:// scheme.")
+    database_query = parse_qs(database_url.query)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(database_url.path.lstrip("/")),
+            "USER": unquote(database_url.username or ""),
+            "PASSWORD": unquote(database_url.password or ""),
+            "HOST": database_url.hostname or "",
+            "PORT": str(database_url.port or 5432),
+            "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "60")),
+            "OPTIONS": {
+                "sslmode": database_query.get("sslmode", [os.getenv("DB_SSLMODE", "require")])[0],
+            },
+        }
+    }
+elif DB_ENGINE in {"postgres", "postgresql", "psql"}:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",

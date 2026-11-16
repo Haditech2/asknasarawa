@@ -242,17 +242,13 @@ SQLite files are ephemeral in serverless deployments.
    DJANGO_SECRET_KEY=<long-random-secret>
    DJANGO_ALLOWED_HOSTS=<project>.vercel.app
    DJANGO_CSRF_TRUSTED_ORIGINS=https://<project>.vercel.app
-   DB_ENGINE=postgresql
-   DB_NAME=<database-name>
-   DB_USER=<database-user>
-   DB_PASSWORD=<database-password>
-   DB_HOST=<database-host>
-   DB_PORT=5432
-   DB_SSLMODE=require
+   DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
    DJANGO_SECURE_SSL_REDIRECT=True
    DJANGO_SECURE_COOKIES=True
    ```
 
+   Neon provides the `DATABASE_URL` value. Keep the connection string secret.
+   The separate `DB_*` variables are also supported if you prefer them.
    Add the custom domain to both `DJANGO_ALLOWED_HOSTS` and
    `DJANGO_CSRF_TRUSTED_ORIGINS` if one is configured.
 5. Deploy with `vercel --prod`.
