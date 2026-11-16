@@ -34,6 +34,7 @@ if not SECRET_KEY:
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 for vercel_host in (
+    "asknasarawa.vercel.app",
     os.getenv("VERCEL_URL", ""),
     os.getenv("VERCEL_PROJECT_PRODUCTION_URL", ""),
 ):
@@ -42,6 +43,7 @@ for vercel_host in (
 
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 for vercel_host in (
+    "asknasarawa.vercel.app",
     os.getenv("VERCEL_URL", ""),
     os.getenv("VERCEL_PROJECT_PRODUCTION_URL", ""),
 ):
