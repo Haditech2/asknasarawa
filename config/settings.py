@@ -33,7 +33,22 @@ if not SECRET_KEY:
         raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set when DEBUG=False.")
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+for vercel_host in (
+    os.getenv("VERCEL_URL", ""),
+    os.getenv("VERCEL_PROJECT_PRODUCTION_URL", ""),
+):
+    if vercel_host and vercel_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(vercel_host)
+
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+for vercel_host in (
+    os.getenv("VERCEL_URL", ""),
+    os.getenv("VERCEL_PROJECT_PRODUCTION_URL", ""),
+):
+    if vercel_host:
+        vercel_origin = f"https://{vercel_host}"
+        if vercel_origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(vercel_origin)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
